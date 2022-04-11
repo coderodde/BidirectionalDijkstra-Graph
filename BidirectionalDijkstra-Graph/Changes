@@ -1,0 +1,6 @@
+Revision history for Perl extension BidirectionalDijkstra::Graph.
+
+0.01  Wed Mar 30 07:54:24 2022
+	- original version; created by h2xs 1.23 with options
+		-AX -n BidirectionalDijkstra::Graph
+
