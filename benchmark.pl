@@ -9,8 +9,12 @@ use BidirectionalDijkstra::Graph;
 use BidirectionalDijkstra::DaryHeap;
 use Time::HiRes qw(gettimeofday);
 
+sub get_millis {
+	return int(1000 * gettimeofday);
+}
+
 sub create_large_graph {
-	my $start_time = gettimeofday;
+	my $start_time = get_millis();
 	my $graph = BidirectionalDijkstra::Graph->new();
 
 	for my $vertex_id (1 .. 100 * 1000) {
@@ -26,12 +30,26 @@ sub create_large_graph {
 				$weight);
 	}
 
-	my $end_time = gettimeofday;
+	my $end_time = get_millis();
 
-	print "Graph built in " . int(1000 * ($end_time - $start_time)) . 
+	print "Graph built in " . ($end_time - $start_time) . 
 	      " seconds.\n";
 
 	return $graph;
 }
 
-create_large_graph();
+sub get_end_vertices {
+	my $size = shift;
+	return [1 + int(rand($size)), 1 + int(rand($size))];
+}
+
+sub main {
+	my $graph = create_large_graph();
+	my $end_vertices = get_end_vertices($graph->size());
+	my $source_vertex = $end_vertices->[0];
+	my $target_vertex = $end_vertices->[1];
+	print "Source vertex: $source_vertex\n";
+	print "Target vertex: $target_vertex\n";
+}
+
+main();

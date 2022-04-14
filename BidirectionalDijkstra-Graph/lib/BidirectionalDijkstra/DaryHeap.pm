@@ -2,7 +2,6 @@ package BidirectionalDijkstra::DaryHeap;
 
 use strict;
 use warnings;
-use POSIX;
 
 require Exporter;
 
@@ -46,7 +45,7 @@ sub new($$) {
 sub get_parent_index {
 	my $self = shift;
 	my $index = shift;
-	return floor(($index - 1) / $self->{degree});
+	return int(($index - 1) / $self->{degree});
 }
 
 sub sift_up {
