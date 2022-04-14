@@ -48,8 +48,20 @@ sub main {
 	my $end_vertices = get_end_vertices($graph->size());
 	my $source_vertex = $end_vertices->[0];
 	my $target_vertex = $end_vertices->[1];
+
 	print "Source vertex: $source_vertex\n";
 	print "Target vertex: $target_vertex\n";
+
+	my $start_time = get_millis();
+	my $path1 = $graph->findShortestPath()->from($source_vertex)->to($target_vertex)->slow();
+	my $end_time = get_millis();
+
+	print "Dijkstra's algorithm in " . ($ned_tiime - $start_time) . " milliseconds.\n";
+	print "Shortest path:\n";
+
+	foreach my $vertex @{$path1} {
+		print "$vertex\n";
+	}
 }
 
 main();

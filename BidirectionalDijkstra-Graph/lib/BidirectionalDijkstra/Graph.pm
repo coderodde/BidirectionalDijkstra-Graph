@@ -30,9 +30,6 @@ our @EXPORT = qw(
 
 our $VERSION = '1.6';
 
-#require XSLoader;
-#XSLoader::load('BidirectionalDijkstra::Graph', $VERSION);
-
 # Preloaded methods go here.
 
 my $children = 0;
@@ -123,6 +120,18 @@ sub removeEdge {
 
 	delete $self->{$tail_vertex_id}->[$children]->{$tail_vertex_id};
 	delete $self->{$head_vertex_id}->[$parents]->{$head_vertex_id};
+} 
+
+sub getChildren {
+	my $self = shift;
+	my $vertex_id = shift;
+	return $self->{$vertex_id}->[$children];
+}
+
+sub getParents {
+	my $self = shift;
+	my $vertex_id = shift;
+	return $self->{$vertex_id}->[$parents];
 }
 
 sub findShortestPath {
