@@ -56,10 +56,10 @@ sub main {
 	my $path1 = $graph->findShortestPath()->from($source_vertex)->to($target_vertex)->slow();
 	my $end_time = get_millis();
 
-	print "Dijkstra's algorithm in " . ($ned_tiime - $start_time) . " milliseconds.\n";
+	print "Dijkstra's algorithm in " . ($end_time - $start_time) . " milliseconds.\n";
 	print "Shortest path:\n";
 
-	foreach my $vertex @{$path1} {
+	foreach my $vertex ($path1) {
 		print "$vertex\n";
 	}
 }

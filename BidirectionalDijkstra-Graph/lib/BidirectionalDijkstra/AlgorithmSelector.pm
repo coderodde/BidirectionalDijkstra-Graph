@@ -55,8 +55,8 @@ sub slow {
 		}
 
 		$settled_vertices->{$current_vertex} = undef;
-
-		foreach my $child_vertex_id (keys %{$graph->{$current_vertex}} {
+	
+		foreach my $child_vertex_id ($graph->getChildren($current_vertex)) {
 			if (exists $settled_vertices->{$child_vertex_id}) {
 				next;
 			}
@@ -68,7 +68,7 @@ sub slow {
 			my $do_update = 0;
 
 			if (not exists $distance_map->{$child_vertex_id}) {
-				$search_frontier->add($child_vertex_id, $tentative_distancee);
+				$search_frontier->add($child_vertex_id, $tentative_distance);
 				$do_update = 1;
 			} elsif ($distance_map->{$child_vertex_id} > $tentative_distance) {
 				$search_frontier->decreasePriority($child_vertex_id, 

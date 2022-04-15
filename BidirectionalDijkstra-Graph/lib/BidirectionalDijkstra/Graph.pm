@@ -80,27 +80,27 @@ sub addEdge {
 }
 
 sub hasEdge {
-	my ($self, $tail_vertex_id, $head_vertex_id) = @_;
-  
-  	if (not exists $self->{$tail_vertex_id}) {
+	my $self = shift;
+	my $tail_vertex = shift;
+	my $head_vertex = shift;  
+
+  	if (not exists $self->{$tail_vertex}) {
   		return 0;
   	}
 
-  	if (not exists $self->{$head_vertex_id}) {
-  		return 0;
-  	}
-
-  	return exists $self->{$tail_vertex_id}->[$children]->{$head_vertex_id};
+  	return exists $self->{$tail_vertex}->[$children]->{$head_vertex};
 }
 
 sub getEdgeWeight {
-	my ($self, $tail_vertex_id, $head_vertex_id) = @_;
-  
-	if (not $self->hasEdge($tail_vertex_id, $head_vertex_id)) {
+	my $self = shift;
+	my $tail_vertex = shift;
+	my $head_vertex = shift;
+
+	if (not $self->hasEdge($tail_vertex, $head_vertex)) {
 		return undef;
 	}
 
-	return $self->{$tail_vertex_id}->[$children]->{$head_vertex_id};
+	return $self->{$tail_vertex}->[$children]->{$head_vertex};
 }
 
 sub removeEdge {
