@@ -9,6 +9,9 @@ use BidirectionalDijkstra::Graph;
 use BidirectionalDijkstra::DaryHeap;
 use Time::HiRes qw(gettimeofday);
 
+my $graph_size = 100 * 1000;
+my $graph_arcs = 500 * 1000;
+
 sub get_millis {
 	return int(1000 * gettimeofday);
 }
@@ -17,13 +20,13 @@ sub create_large_graph {
 	my $start_time = get_millis();
 	my $graph = BidirectionalDijkstra::Graph->new();
 
-	for my $vertex_id (1 .. 100 * 1000) {
+	for my $vertex_id (1 .. $graph_size) {
 		$graph->addVertex($vertex_id);
 	}
 
-	for my $arc (1 .. 500 * 1000) {
-		my $tail_vertex_id = 1 + int(rand(100 * 1000));
-		my $head_vertex_id = 1 + int(rand(100 * 1000));
+	for my $arc (1 .. $graph_arcs) {
+		my $tail_vertex_id = 1 + int(rand($graph_size));
+		my $head_vertex_id = 1 + int(rand($graph_size));
 		my $weight = rand();
 		$graph->addEdge($tail_vertex_id,
 				        $head_vertex_id,
@@ -39,14 +42,13 @@ sub create_large_graph {
 }
 
 sub get_end_vertices {
-	my $size = shift;
-	return [1 + int(rand($size)),
-			1 + int(rand($size))];
+	return [1 + int(rand($graph_size)),
+			1 + int(rand($graph_size))];
 }
 
 sub main {
 	my $graph = create_large_graph();
-	my $end_vertices = get_end_vertices($graph->size());
+	my $end_vertices = get_end_vertices();
 	my $source_vertex = $end_vertices->[0];
 	my $target_vertex = $end_vertices->[1];
 
@@ -59,9 +61,12 @@ sub main {
 
 	print "Dijkstra's algorithm in " . ($end_time - $start_time) . " milliseconds.\n";
 	print "Shortest path:\n";
-
-	foreach my $vertex ($path1) {
-		print "$vertex\n";
+	
+	my $vertex_number = 1;
+	
+	foreach my $vertex (@{$path1}) {
+		print "$vertex_number: $vertex\n";
+		$vertex_number += 1;
 	}
 }
 

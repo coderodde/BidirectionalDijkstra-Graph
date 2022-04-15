@@ -114,12 +114,12 @@ sub removeEdge {
 		return;
 	}
 
-	if (not exists $self->{$tail_vertex_id}->[$children]->{$tail_vertex_id}) {
+	if (not exists $self->{$tail_vertex_id}->[$children]->{$head_vertex_id}) {
 		return;
 	}
 
-	delete $self->{$tail_vertex_id}->[$children]->{$tail_vertex_id};
-	delete $self->{$head_vertex_id}->[$parents]->{$head_vertex_id};
+	delete $self->{$tail_vertex_id}->[$children]->{$head_vertex_id};
+	delete $self->{$head_vertex_id}->[$parents]->{$tail_vertex_id};
 } 
 
 sub getChildren {

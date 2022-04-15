@@ -14,16 +14,15 @@ sub new {
 sub tracebackPathUnidirectional {
 	my $parent_map = shift;
 	my $target_vertex = shift;
-	my @path = [];
+	my $path = [];
 	my $current_vertex = $target_vertex;
 	
-	while (defined $current_vertex) {
-		push(@path, ($current_vertex));
+	while (defined($current_vertex)) {
+		push(@{$path}, $current_vertex);
 		$current_vertex = $parent_map->{$current_vertex};
 	}
 
-	reverse @path;
-	return @path;
+	return [ reverse @{$path} ];
 }
 
 sub slow {
@@ -56,7 +55,7 @@ sub slow {
 
 		$settled_vertices->{$current_vertex} = undef;
 	
-		foreach my $child_vertex_id ($graph->getChildren($current_vertex)) {
+		foreach my $child_vertex_id (keys %{$graph->getChildren($current_vertex)}) {
 			if (exists $settled_vertices->{$child_vertex_id}) {
 				next;
 			}
@@ -76,7 +75,7 @@ sub slow {
 				$do_update = 1;
 			}
 
-			if ($update) {
+			if ($do_update) {
 				$distance_map->{$child_vertex_id} = $tentative_distance;
 				$parent_map->{$child_vertex_id} = $current_vertex;
 			}
