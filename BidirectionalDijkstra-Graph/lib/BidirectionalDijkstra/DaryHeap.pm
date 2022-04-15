@@ -191,6 +191,11 @@ sub size {
 	return $size;
 }
 
+sub peekMinimum {
+	my $self = shift;
+	return $self->{node_array}->[0]->{vertex_id};
+}
+
 sub extractMinimum {	
 	my $self = shift;
 	my $node = $self->{node_array}->[0];

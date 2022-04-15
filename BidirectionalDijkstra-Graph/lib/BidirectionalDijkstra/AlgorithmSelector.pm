@@ -30,9 +30,15 @@ sub slow {
 	my $graph = $data->{graph};
 	my $source = $data->{source_vertex_id};
 	my $target = $data->{target_vertex_id};
-
-	print "Slow: ", $graph->size(), ", ", $source, " -> ", $target, "\n";
-
+	
+	if (not $graph->hasVertex($source)) {
+        die "The vertex '$source' does not belong to the input graph.";
+    }
+    
+	if (not $graph->hasVertex($target)) {
+        die "The vertex '$source' does not belong to the input graph.";
+    }
+	
 	my $search_frontier = BidirectionalDijkstra::DaryHeap->new(4);
 	my $settled_vertices = {};
 	my $distance_map = {};
@@ -85,13 +91,92 @@ sub slow {
 	return undef;
 }
 
+sub tracebackPathBidirectional {
+	my $parent_map_forward  = shift;
+	my $parent_map_backward = shift;
+	my $touch_vertex = shift;
+	
+	my $path = [];
+	my $current_vertex = $touch_vertex;
+	
+	while (defined($current_vertex)) {
+        unshift(@{path}, $current_vertex);
+		$current_vertex = $parent_map_forward->{$current_vertex};
+    }
+    
+	$current_vertex = $parent_map_backward->{$touch_vertex};
+	
+	while (defined($current_vertex)) {
+        push(@{$path}, $current_vertex);
+		$current_vertex = $parent_map_backward->{$current_vertex};
+    }
+    
+	
+	return @{$path};
+}
+
 sub fast {
 	my $data = shift;
 	my $graph = $data->{graph};
 	my $source = $data->{source_vertex_id};
 	my $target = $data->{target_vertex_id};
+	
+	if (not $graph->hasVertex($source)) {
+        die "The vertex '$source' does not belong to the input graph.";
+    }
+    
+	if (not $graph->hasVertex($target)) {
+        die "The vertex '$source' does not belong to the input graph.";
+    }
+	
+	if ($source eq $target) {
+		# We must handle this case outside of actual logic.
+		# Otherwise, a cycle containing $source may be returned,
+		# which is not optimal.
+		return [ $target ];
+    }
+    
 
-	print "Fast: ", $graph->size(), ", ", $source, " -> ", $target, "\n";
+	my $search_frontier_forward  = BidirectionalDijkstra::DaryHeap->new(4);
+	my $search_frontier_backward = BidirectionalDijkstra::DaryHeap->new(4);
+	
+	my $settled_vertices_forward  = {};
+	my $settled_vertices_backward = {};
+	
+	my $distance_map_forward  = {};
+	my $distance_map_backward = {};
+	
+	my $parent_map_forward  = {};
+	my $parent_map_backward = {};
+	
+	$search_frontier_forward ->add($source, 0.0);
+	$settled_vertices_forward->add($target, 0.0);
+	
+	$distance_map_forward ->{$source} = 0.0;
+	$distance_map_backward->{$target} = 0.0;
+	
+	$parent_map_forward ->{$source} = undef;
+	$parent_map_backward->{$target} = undef;
+	
+	my $best_path_length = inf;
+	my $touch_vertex = undef;
+	
+	while ($search_frontier_forward ->size() > 0 and
+		   $search_frontier_backward->size() > 0) {
+        my $temporary_path_length =
+			$distance_map_forward {$search_frontier_forward ->peekMinimum()} +
+			$distance_map_backward{$search_frontier_backward->peekMinimum()};
+			
+		if ($temporary_path_length > $best_path_length) {
+            return tracebackPathBidirectional($parent_map_forward,
+											  $parent_map_backward,
+											  $touch_vertex);
+        }
+        
+		
+    }
+	
+	return undef;
 }
 
 1;
