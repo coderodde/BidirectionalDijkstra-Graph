@@ -68,6 +68,24 @@ sub main {
 		print "$vertex_number: $vertex\n";
 		$vertex_number += 1;
 	}
+	
+	print "\n----\n\n";
+	
+	$start_time = get_millis();
+	my $path2 = $graph->findShortestPath()->from($source_vertex)->to($target_vertex)->fast();
+	$end_time = get_millis();
+	
+	print "Bidirectional Dijkstra's algorithm in " .
+		($end_time - $start_time) . " milliseconds.\n";
+		
+	print "Shortest path:\n";
+	
+	$vertex_number = 1;
+	
+	foreach my $vertex (@{$path1}) {
+		print "$vertex_number: $vertex\n";
+		$vertex_number += 1;
+	}
 }
 
 main();

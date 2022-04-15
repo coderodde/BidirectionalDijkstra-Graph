@@ -150,7 +150,7 @@ sub fast {
 	my $parent_map_backward = {};
 	
 	$search_frontier_forward ->add($source, 0.0);
-	$settled_vertices_forward->add($target, 0.0);
+	$search_frontier_backward->add($target, 0.0);
 	
 	$distance_map_forward ->{$source} = 0.0;
 	$distance_map_backward->{$target} = 0.0;
@@ -158,7 +158,7 @@ sub fast {
 	$parent_map_forward ->{$source} = undef;
 	$parent_map_backward->{$target} = undef;
 	
-	my $best_path_length = inf;
+	my $best_path_length = 2 ** 41;
 	my $touch_vertex = undef;
 	
 	while ($search_frontier_forward ->size() > 0 and
@@ -173,8 +173,8 @@ sub fast {
 											  $touch_vertex);
         }
         
-		my $size_of_settled_vertices_forward  = keys $settled_vertices_forward;
-		my $size_of_settled_vertices_backward = keys $settled_vertices_backward; 
+		my $size_of_settled_vertices_forward  = keys %{$settled_vertices_forward};
+		my $size_of_settled_vertices_backward = keys %{$settled_vertices_backward}; 
 		
 		if ($search_frontier_forward ->size() + $size_of_settled_vertices_forward <
 			$search_frontier_backward->size() + $size_of_settled_vertices_backward) {
@@ -230,7 +230,6 @@ sub fast {
 				my $tentative_score = $distance_map_backward->{$current_vertex} +
 									  $graph->getEdgeWeight($parent_vertex_id,
 														    $current_vertex);
-									  					    $child_vertex_id);
 				my $do_update = 0;
 				
 				if (not exists $distance_map_backward->{$parent_vertex_id}) {
