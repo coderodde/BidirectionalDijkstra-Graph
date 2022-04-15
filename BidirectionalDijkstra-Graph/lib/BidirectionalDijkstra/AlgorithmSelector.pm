@@ -77,7 +77,7 @@ sub slow {
 				$do_update = 1;
 			} elsif ($distance_map->{$child_vertex_id} > $tentative_distance) {
 				$search_frontier->decreasePriority($child_vertex_id, 
-								   $tentative_distance);
+								                   $tentative_distance);
 				$do_update = 1;
 			}
 
@@ -173,7 +173,93 @@ sub fast {
 											  $touch_vertex);
         }
         
+		my $size_of_settled_vertices_forward  = keys $settled_vertices_forward;
+		my $size_of_settled_vertices_backward = keys $settled_vertices_backward; 
 		
+		if ($search_frontier_forward ->size() + $size_of_settled_vertices_forward <
+			$search_frontier_backward->size() + $size_of_settled_vertices_backward) {
+            
+			my $current_vertex = $search_frontier_forward->extractMinimum();
+			$settled_vertices_forward->{$current_vertex} = undef;
+			
+			foreach my $child_vertex_id (keys %{$graph->getChildren($current_vertex)}) {
+				if (exists $settled_vertices_forward->{$child_vertex_id}) {
+					next;
+				}
+				
+				my $tentative_score = $distance_map_forward->{$current_vertex} +
+									  $graph->getEdgeWeight($current_vertex,
+														    $child_vertex_id);
+				my $do_update = 0;
+				
+				if (not exists $distance_map_forward->{$child_vertex_id}) {
+					$search_frontier_forward->add($child_vertex_id, $tentative_score);
+					$do_update = 1;
+                } elsif ($distance_map_forward->{$child_vertex_id} > $tentative_score) {
+					$search_frontier_forward->decreasePriority($child_vertex_id,
+															   $tentative_score);
+					$do_update = 1;
+				}
+				
+				if ($do_update) {
+                    $distance_map_forward->{$child_vertex_id} = $tentative_score;
+					$parent_map_forward->{$child_vertex_id} = $current_vertex;
+					
+					if (exists $settled_vertices_backward->{$child_vertex_id}) {
+						my $temp_path_length =
+							$tentative_score +
+							$distance_map_backward->{$child_vertex_id};
+						
+						if ($best_path_length > $temp_path_length) {
+                            $best_path_length = $temp_path_length;
+							$touch_vertex = $child_vertex_id;
+                        }
+                        
+                    }
+                }
+			}
+        } else {
+			my $current_vertex = $search_frontier_backward->extractMinimum();
+			$settled_vertices_backward->{$current_vertex} = undef;
+			
+			foreach my $parent_vertex_id (keys %{$graph->getParents($current_vertex)}) {
+				if (exists $settled_vertices_backward->{$parent_vertex_id}) {
+					next;
+				}
+				
+				my $tentative_score = $distance_map_backward->{$current_vertex} +
+									  $graph->getEdgeWeight($parent_vertex_id,
+														    $current_vertex);
+									  					    $child_vertex_id);
+				my $do_update = 0;
+				
+				if (not exists $distance_map_backward->{$parent_vertex_id}) {
+					$search_frontier_backward->add($parent_vertex_id, $tentative_score);
+					$do_update = 1;
+                } elsif ($distance_map_backward->{$parent_vertex_id} > $tentative_score) {
+					$search_frontier_backward->decreasePriority($parent_vertex_id,
+										    					$tentative_score);
+					$do_update = 1;
+				}
+				
+				if ($do_update) {
+                    $distance_map_backward->{$parent_vertex_id} = $tentative_score;
+					$parent_map_backward  ->{$parent_vertex_id} = $current_vertex;
+					
+					if (exists $settled_vertices_forward->{$parent_vertex_id}) {
+						my $temp_path_length =
+							$tentative_score +
+							$distance_map_forward->{$parent_vertex_id};
+						
+						if ($best_path_length > $temp_path_length) {
+                            $best_path_length = $temp_path_length;
+							$touch_vertex = $child_vertex_id;
+                        }
+                    }
+                }
+			}
+		}
+        
     }
 	
 	return undef;
