@@ -26,8 +26,8 @@ sub create_large_graph {
 		my $head_vertex_id = 1 + int(rand(100 * 1000));
 		my $weight = rand();
 		$graph->addEdge($tail_vertex_id,
-				$head_vertex_id,
-				$weight);
+				        $head_vertex_id,
+				        $weight);
 	}
 
 	my $end_time = get_millis();
@@ -40,7 +40,8 @@ sub create_large_graph {
 
 sub get_end_vertices {
 	my $size = shift;
-	return [1 + int(rand($size)), 1 + int(rand($size))];
+	return [1 + int(rand($size)),
+			1 + int(rand($size))];
 }
 
 sub main {

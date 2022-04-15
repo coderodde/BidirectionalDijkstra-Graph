@@ -75,8 +75,8 @@ sub size {
 
 sub addEdge {
 	my ($self, $tail_vertex_id, $head_vertex_id, $weight) = @_;
-	$self->{$tail_vertex_id}[$children]{$head_vertex_id} = $weight;
-	$self->{$head_vertex_id}[$parents]{$tail_vertex_id} = $weight;
+	$self->{$tail_vertex_id}->[$children]->{$head_vertex_id} = $weight;
+	$self->{$head_vertex_id}->[$parents]->{$tail_vertex_id} = $weight;
 }
 
 sub hasEdge {
